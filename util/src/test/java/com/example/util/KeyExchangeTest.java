@@ -14,5 +14,6 @@ class KeyExchangeTest {
     var key2 = bob.establishKey(alice.getPublicKey());
 
     Assertions.assertThat(key1).isEqualTo(key2);
+    Assertions.assertThat(key1.length).isEqualTo(32);
   }
 }

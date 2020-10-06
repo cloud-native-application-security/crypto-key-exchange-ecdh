@@ -53,13 +53,10 @@ public class KeyExchange {
     return secretKeyFactory.generateSecret(keySpec).getEncoded();
   }
 
-  private PublicKey parsePublicKey(String key) {
-    try {
-      KeyFactory keyFactory = KeyFactory.getInstance("DH");
-      var publicKeySpec = new X509EncodedKeySpec(Hex.decode(key));
-      return keyFactory.generatePublic(publicKeySpec);
-    } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-      throw new RuntimeException(e);
-    }
+  private PublicKey parsePublicKey(String key)
+      throws NoSuchAlgorithmException, InvalidKeySpecException {
+    KeyFactory keyFactory = KeyFactory.getInstance("DH");
+    var publicKeySpec = new X509EncodedKeySpec(Hex.decode(key));
+    return keyFactory.generatePublic(publicKeySpec);
   }
 }
