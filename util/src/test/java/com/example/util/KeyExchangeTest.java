@@ -10,8 +10,8 @@ class KeyExchangeTest {
     var alice = new KeyExchange();
     var bob = new KeyExchange();
 
-    var key1 = alice.establishKey(bob.getPublicKey());
-    var key2 = bob.establishKey(alice.getPublicKey());
+    var key1 = alice.establishAes256bitKey(bob.getPublicKey());
+    var key2 = bob.establishAes256bitKey(alice.getPublicKey());
 
     Assertions.assertThat(key1).isEqualTo(key2);
     Assertions.assertThat(key1.length).isEqualTo(32);

@@ -19,8 +19,8 @@ public class KeyExchange {
 
   public KeyExchange() {
     try {
-      var keyPairGenerator = KeyPairGenerator.getInstance("DH");
-      keyPairGenerator.initialize(1024);
+      var keyPairGenerator = KeyPairGenerator.getInstance("EC");
+      keyPairGenerator.initialize(256);
       this.keyPair = keyPairGenerator.generateKeyPair();
     } catch (NoSuchAlgorithmException e) {
       throw new RuntimeException(e);
@@ -32,18 +32,25 @@ public class KeyExchange {
     return new String(Hex.encode(publicKey));
   }
 
-  public byte[] establishKey(String peerPublicKey) {
+  public byte[] establishAes256bitKey(String peerPublicKey) {
     try {
-      var keyAgreement = KeyAgreement.getInstance("DH");
-      keyAgreement.init(keyPair.getPrivate());
-
-      var peerKey = parsePublicKey(peerPublicKey);
-      keyAgreement.doPhase(peerKey, true);
-      var generatedSecret = keyAgreement.generateSecret();
-      return deriveAes256bitKey(generatedSecret);
+      KeyFactory keyFactory = KeyFactory.getInstance("EC");
+      var publicKeySpec = new X509EncodedKeySpec(Hex.decode(peerPublicKey));
+      var publicKey = keyFactory.generatePublic(publicKeySpec);
+      return establishAes256bitKey(publicKey);
     } catch (NoSuchAlgorithmException | InvalidKeyException | InvalidKeySpecException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  private byte[] establishAes256bitKey(PublicKey peerPublicKey)
+      throws InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException {
+    var keyAgreement = KeyAgreement.getInstance("ECDH");
+    keyAgreement.init(keyPair.getPrivate());
+
+    keyAgreement.doPhase(peerPublicKey, true);
+    var generatedSecret = keyAgreement.generateSecret();
+    return deriveAes256bitKey(generatedSecret);
   }
 
   private byte[] deriveAes256bitKey(byte[] input)
@@ -51,12 +58,5 @@ public class KeyExchange {
     var secretKeyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
     var keySpec = new PBEKeySpec(new String(input).toCharArray(), input, 1024, 256);
     return secretKeyFactory.generateSecret(keySpec).getEncoded();
-  }
-
-  private PublicKey parsePublicKey(String key)
-      throws NoSuchAlgorithmException, InvalidKeySpecException {
-    KeyFactory keyFactory = KeyFactory.getInstance("DH");
-    var publicKeySpec = new X509EncodedKeySpec(Hex.decode(key));
-    return keyFactory.generatePublic(publicKeySpec);
   }
 }
