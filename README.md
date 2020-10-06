@@ -1,4 +1,4 @@
-# crypto-aes-jwe
+# crypto-key-exchange-dh
 
 Demo project showing how to use JSON Web Encryption with AES in GCM mode with 256-bit key to
 guarantee integrity,  authenticity, and confidentiality between two applications. 
