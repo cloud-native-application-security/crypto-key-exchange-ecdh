@@ -1,6 +1,7 @@
 package com.example.util;
 
-import org.assertj.core.api.Assertions;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.jupiter.api.Test;
 
 class KeyExchangeTest {
@@ -13,7 +14,7 @@ class KeyExchangeTest {
     var key1 = alice.establishAes256bitKey(bob.getPublicKey());
     var key2 = bob.establishAes256bitKey(alice.getPublicKey());
 
-    Assertions.assertThat(key1).isEqualTo(key2);
-    Assertions.assertThat(key1.length).isEqualTo(32);
+    assertThat(key1).isEqualTo(key2);
+    assertThat(key1.length).isEqualTo(32);
   }
 }
