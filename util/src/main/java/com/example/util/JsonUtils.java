@@ -14,6 +14,11 @@ public class JsonUtils {
     objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true);
   }
 
+  public static String prettyPrint(String json) {
+    Object o = JsonUtils.fromJson(json, Object.class);
+    return toJson(o);
+  }
+
   public static String toJson(Object object) {
     try {
       return objectMapper.writeValueAsString(object);

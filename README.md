@@ -1,12 +1,13 @@
 # crypto-key-exchange-ecdh
 
-Demo project showing how to use JSON Web Encryption with AES in GCM mode with 256-bit key to
-guarantee integrity,  authenticity, and confidentiality between two applications. 
-There are three subprojects in this repo.
+Demo project showing how to use Elliptic Curve Diffie-Hellman key exchange to generate a key for
+use with AES. There are three subprojects in this repo.
 
-* utils - contains shared utility classes `CrptoUtils` and `JsonUtils`.  
-* warehouse - generates `data/refunds.jwe` file encrypted with AES/GCM, depends on the utils project. 
-* payments -  reads and decrypts `data/refunds.jwe`, depends on utils project.
+* utils - contains shared utility classes `CrptoUtils`,`JsonUtils` and `KeyExchange`.  
+* warehouse - offers `/refunds` api that generates a JWE encrypted using a key derive via ECDH. 
+  Depends on the utils project. 
+* payments -  Makes an HTTP request to the warehouse `/refunds` endpoint to get the encrypted 
+  refunds json. 
 
 ## Critical Warning
 
@@ -33,32 +34,33 @@ samples to your specific situation.
 
 ## run on the command line
 
-* run warehouse app `java -jar warehouse/target/warehouse-0.0.1-SNAPSHOT.jar` to generate the 
-  `data/refunds.jwe` file
-* run payments app `java -jar payments/target/payments-0.0.1-SNAPSHOT.jar` to read the 
-  `data/refunds.jwe` and verify and decrypt it.
-* edit `data/refunds.jwe` to simulate corruption. you can add a newline at the end of the file.
-* run payments app `java -jar payments/target/payments-0.0.1-SNAPSHOT.jar` you will an exception. 
+* run warehouse app `java -jar warehouse/target/warehouse-0.0.1-SNAPSHOT.jar` it will listen on 
+  port `8082`. 
+* run payments app `java -jar payments/target/payments-0.0.1-SNAPSHOT.jar` it will listen on port 
+  `8081`.
+* make an HTTP get request to `http://127.0.0.1:8081/` and you will get back JSON object.
+* inspect the console output on the warehouse application nod you will an output showing the 
+  value of the AES encryption key derived using ECDH. 
+* inspect the console output of the payments application you will the AES key used for decryption 
+  Notice it has the same value as the warehouse application. You will see the output of the
+  response from the warehouse application containing the public key of the warehouse application, 
+  and the encrypted JWE. If you scroll up in the console output you will see the actual HTTP 
+  requests exchanged on the wire. 
 
 ## run from the IDE 
 
-* run `com.example.warehouse.WarehouseApplication` to generate the `data/refunds.jwe`
-* run `com.example.payments.PaymentsApplication` to read the `data/refunds.jwe`  verify and decrypt 
-* edit `data/refunds.jwe` to simulate corruption. you can add a newline at the end of the file.
-* run `com.example.payments.PaymentsApplication` to get a data corruption exception 
-* restore `data/refunds.jwe` to its original state
-* edit the refunds password in `payments/src/main/resources/application.yml`
-* run `com.example.payments.PaymentsApplication` to get a data corruption exception 
+* run `com.example.warehouse.WarehouseApplication` it will listen on port `8082`. 
+* run `com.example.payments.PaymentsApplication` it will listen on port `8081`. 
+* Add a debugger breakpoint to the code in `com.example.warehouse.RefundController` 
+* Add a debbuger breakpoint to the code in `com.example.payments.PaymentsController`
 
 ## interesting files to look at 
 
+* `util/src/main/java/com/example/util/KeyExchange.java` for the Diffie-Hellman key exchange
+  implementation. 
 * `util/src/main/java/com/example/util/CryptoUtils.java` to examine AES encryption
-* `warehouse/src/main/java/com/example/warehouse/RefundGenerationService.java` to examine the code
-that generates the `refund.jwe` file
-* `payments/src/main/java/com/example/payments/PaymentService.java` to examine the code that 
- verifies and decrypts the `refund.jwe` file before consuming it.
+* `warehouse/src/main/java/com/example/warehouse/RefundController.java` to examine the code
+that generates the api response from the warehouse app. 
+* `payments/src/main/java/com/example/payments/PaymentsController.java` to examine the code 
+  that calls the warehouse application api. 
 
-## Generating a random 256-bit key with OpenSSL
-
-Using the openssl command line you can generate 256-bit encoded as  16 bytes of hex using the 
-command `openssl rand -hex 16`
