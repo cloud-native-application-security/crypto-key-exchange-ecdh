@@ -15,13 +15,14 @@ import javax.crypto.KeyAgreement;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
-public class KeyExchange {
+public class NistP256KeyExchange {
 
   private final KeyPair keyPair;
 
-  public KeyExchange() {
+  public NistP256KeyExchange() {
     try {
-      var keyPairGenerator = KeyPairGenerator.getInstance("X25519");
+      var keyPairGenerator = KeyPairGenerator.getInstance("EC");
+      keyPairGenerator.initialize(256);
       this.keyPair = keyPairGenerator.generateKeyPair();
     } catch (NoSuchAlgorithmException e) {
       throw new RuntimeException(e);
@@ -35,7 +36,7 @@ public class KeyExchange {
 
   public byte[] establishAes256bitKey(String peerPublicKey) {
     try {
-      KeyAgreement keyAgreement = KeyAgreement.getInstance("X25519");
+      KeyAgreement keyAgreement = KeyAgreement.getInstance("ECDH");
       keyAgreement.init(keyPair.getPrivate());
 
       keyAgreement.doPhase(fromBase64(peerPublicKey), true);
@@ -57,7 +58,7 @@ public class KeyExchange {
 
   private PublicKey fromBase64(String peerPublicKeyInBase64Url)
       throws NoSuchAlgorithmException, InvalidKeySpecException {
-    KeyFactory keyFactory = KeyFactory.getInstance("X25519");
+    KeyFactory keyFactory = KeyFactory.getInstance("EC");
     var peerPublicKeyBytes = Base64.getUrlDecoder().decode(peerPublicKeyInBase64Url);
     var publicKeySpec = new X509EncodedKeySpec(peerPublicKeyBytes);
     return keyFactory.generatePublic(publicKeySpec);
