@@ -1,6 +1,6 @@
 # crypto-key-exchange-ecdh
 
-Demo project showing how to use Elliptic Curve Diffie-Hellman (ECDH) key exchange to generate 
+Demo project showing how to use **Elliptic Curve Diffie-Hellman (ECDH)** key exchange to generate 
 a key for use with AES. Elliptic Curve 25519 is used for the key exchange, and the sample code
 contains an example that uses the NIST P-256 curve. There are three subprojects in this repo.
 
