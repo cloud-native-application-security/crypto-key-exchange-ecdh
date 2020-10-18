@@ -53,7 +53,7 @@ samples to your specific situation.
 * run `com.example.warehouse.WarehouseApplication` it will listen on port `8082`. 
 * run `com.example.payments.PaymentsApplication` it will listen on port `8081`. 
 * Add a debugger breakpoint to the code in `com.example.warehouse.RefundController` 
-* Add a debbuger breakpoint to the code in `com.example.payments.PaymentsController`
+* Add a debugger breakpoint to the code in `com.example.payments.PaymentsController`
 
 ## interesting files to look at 
 
