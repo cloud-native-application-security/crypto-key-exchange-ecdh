@@ -36,6 +36,11 @@
           <groupId>org.junit.vintage</groupId>
           <artifactId>junit-vintage-engine</artifactId>
         </exclusion>
+        <!-- conflict with google Tink pulling in org.json:json:20180813 -->
+        <exclusion>
+          <groupId>com.vaadin.external.google</groupId>
+          <artifactId>android-json</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
   </dependencies>
