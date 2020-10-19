@@ -10,9 +10,9 @@
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
   <groupId>com.example</groupId>
-  <artifactId>crypto-key-exchange-dh</artifactId>
+  <artifactId>crypto-key-exchange-ecdh</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>crypto-key-exchange-dh</name>
+  <name>crypto-key-exchange-ecdh</name>
   <packaging>pom</packaging>
   <description>Example showing how Diffie-Helman Key Exchange Works in Java</description>
 
